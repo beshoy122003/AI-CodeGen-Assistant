@@ -26,7 +26,10 @@ def get_langchain_llm(model, tokenizer):
         "text-generation",
         model=model,
         tokenizer=tokenizer,
-        max_new_tokens=200
+        max_new_tokens=150,
+        return_full_text=False,
+        do_sample=False,
+        temperature=None
     )
 
     return HuggingFacePipeline(pipeline=pipe)
