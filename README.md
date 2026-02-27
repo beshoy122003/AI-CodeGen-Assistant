@@ -274,4 +274,3 @@ It is a self-improving adaptive AI assistant that:
 * Streaming responses
 * Automated evaluation pipeline
 * Multi-language code support
-

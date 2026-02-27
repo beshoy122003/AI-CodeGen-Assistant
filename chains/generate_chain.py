@@ -1,5 +1,3 @@
-import torch
-
 def generate_code(query, retrieved_docs, tokenizer, model):
 
     context = "\n\n".join([doc.page_content for doc in retrieved_docs])
@@ -20,7 +18,7 @@ Use the reference tasks below to write a correct solution.
 ```python
 """
 
-    inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
+    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
 
     outputs = model.generate(
         **inputs,
@@ -29,4 +27,9 @@ Use the reference tasks below to write a correct solution.
         do_sample=False
     )
 
-    return tokenizer.decode(outputs[0], skip_special_tokens=True)
+    decoded = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    if "```python" in decoded:
+        decoded = decoded.split("```python")[-1].split("```")[0]
+
+    return decoded.strip()

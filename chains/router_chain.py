@@ -62,17 +62,27 @@ class SemanticRouter:
         self.model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 
         self.labels = {
-            "explain": "explain a concept or definition",
-            "generate": "write a function or generate code"
+            "explain": "explain a programming concept, definition, why something is used, how it works",
+            "generate": "write python code, implement a function, generate a solution"
         }
 
         self.label_embeddings = self.model.encode(list(self.labels.values()),
                                                   normalize_embeddings=True)
 
-    def route(self, query):
+    def route(self, query: str):
 
-        query_embedding = self.model.encode([query],
-                                            normalize_embeddings=True)
+        q = query.lower()
+
+        # Rule-based guard (fast & accurate)
+        explain_keywords = ["what", "why", "how", "difference", "explain"]
+
+        if any(k in q for k in explain_keywords):
+            return "explain"
+
+        query_embedding = self.model.encode(
+            [q],
+            normalize_embeddings=True
+        )
 
         scores = cosine_similarity(query_embedding, self.label_embeddings)[0]
 

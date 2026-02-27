@@ -195,18 +195,10 @@ def generate(query: str):
 
     load_generate_components()
 
-    results = db.similarity_search_with_relevance_scores(query, k=5)
+    docs = db.similarity_search(query, k=5)
 
-    if not results:
+    if len(docs) == 0:
         return handle_unknown(query)
-
-    top_score = results[0][1]
-
-    # 🔥 threshold — نعدله بعد التجربة لو حبيت
-    if top_score < 0.5:
-        return handle_unknown(query)
-
-    docs = [r[0] for r in results]
 
     unique_docs = []
     seen = set()
@@ -265,30 +257,31 @@ if RUN_EXPLAIN_TEST:
 # Full System 🚀
 # ================================
 
-if RUN_FULL_SYSTEM:
+if __name__ == "__main__":
+    if RUN_FULL_SYSTEM:
 
-    print("\n💡 AI-CodeGen-Assistant is ready! Type 'exit' to stop.\n")
+        print("\n💡 AI-CodeGen-Assistant is ready! Type 'exit' to stop.\n")
 
-    while True:
+        while True:
 
-        user_query = input("You: ")
+            user_query = input("You: ")
 
-        if user_query.lower() == "exit":
-            print("Goodbye 👋")
-            break
+            if user_query.lower() == "exit":
+                print("Goodbye 👋")
+                break
 
-        intent = router.route(user_query)
+            intent = router.route(user_query)
 
-        print(f"[Router → {intent}]")
+            print(f"[Router → {intent}]")
 
-        if intent == "explain":
-            answer = explain(user_query)
+            if intent == "explain":
+                answer = explain(user_query)
 
-        elif intent == "generate":
-            answer = generate(user_query)
+            elif intent == "generate":
+                answer = generate(user_query)
 
-        else:
-            answer = "I am not sure how to handle that."
+            else:
+                answer = "I am not sure how to handle that."
 
-        print("\nAI:\n", answer)
-        print("\n" + "=" * 60 + "\n")
+            print("\nAI:\n", answer)
+            print("\n" + "=" * 60 + "\n")
